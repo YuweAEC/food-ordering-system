@@ -1,0 +1,56 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Django migrations
+**/migrations/
+**/migrations/*.pyc
+**/migrations/__pycache__/
+
+# SQLite database
+db.sqlite3
+
+# Environment variables / secrets (if added later)
+.env
+*.env
+
+# Django static files (if using collectstatic)
+staticfiles/
+static/
+
+# VS Code / JetBrains IDEs
+.vscode/
+.idea/
+
+# macOS system files
+.DS_Store
+
+# Logs and backups
+*.log
+*.bak
+
+# Python virtual environment
+venv/
+env/
+ENV/
+
+# Coverage/testing output
+htmlcov/
+.coverage
+.tox/
+.nox/
+.pytest_cache/
+.cache/
+coverage.xml
+
+# Node (if using frontend packages in future)
+node_modules/
+
+# Docker
+*.pid
+*.db
+
+# Others (compiled, temp)
+*.swp
+*.swo
