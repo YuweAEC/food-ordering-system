@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<h2>Your Cart</h2>
+<ul class="list-group mb-3">
+    {% for item in cart_items %}
+    <li class="list-group-item d-flex justify-content-between">
+        {{ item.food_item.name }} x {{ item.quantity }}
+        <span>₹{{ item.total_price }}</span>
+    </li>
+    {% endfor %}
+</ul>
+<h4>Total: ₹{{ total }}</h4>
+<a href="/place-order/" class="btn btn-success">Place Order</a>
+{% endblock %}
