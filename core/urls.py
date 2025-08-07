@@ -1,5 +1,13 @@
 from django.urls import path
 from . import views
+from rest_framework import routers
+from .api_views import FoodItemViewSet, CartItemViewSet, WishlistViewSet
+
+# DRF Router for API endpoints
+router = routers.DefaultRouter()
+router.register(r'api/fooditems', FoodItemViewSet)
+router.register(r'api/cartitems', CartItemViewSet)
+router.register(r'api/wishlist', WishlistViewSet)
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -12,6 +20,10 @@ urlpatterns = [
     path('wishlist/', views.Wishlist, name='wishlist'),
     path('wishlist/add/<int:item_id>/', views.add_to_wishlist, name='add_to_wishlist'),
     path('wishlist/remove/<int:item_id>/', views.remove_from_wishlist, name='remove_from_wishlist'),
-    # path('checkout/', views.checkout, name='checkout'),
-    # path('apply-coupon/', views.apply_coupon, name='apply_coupon'),
+
+    # Newly added
+    path('apply-coupon/', views.apply_coupon, name='apply_coupon'),
 ]
+
+# Add API URLs from router
+urlpatterns += router.urls

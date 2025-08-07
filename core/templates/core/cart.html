@@ -1,7 +1,10 @@
 {% extends 'core/base.html' %}
 {% block title %}Cart{% endblock %}
+
 {% block content %}
 <h2>Your Cart</h2>
+
+<!-- CART ITEMS -->
 <ul class="list-group mb-3">
     {% for item in cart_items %}
     <li class="list-group-item d-flex justify-content-between">
@@ -10,6 +13,30 @@
     </li>
     {% endfor %}
 </ul>
+
+<!-- CART TOTAL -->
 <h4>Total: ₹{{ total }}</h4>
+<!-- 🔻 ADD THIS BLOCK: Coupon Form -->
+<form method="post" action="{% url 'apply_coupon' %}" class="mb-3">
+    {% csrf_token %}
+    <div class="input-group">
+        <input type="text" name="code" class="form-control" placeholder="Enter Coupon Code" required>
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-success">Apply Coupon</button>
+        </div>
+    </div>
+</form>
+
+<!--  ADD THIS BLOCK: If coupon is applied, show discount and final price -->
+{% if coupon %}
+    <div class="alert alert-info">
+        <strong>Coupon "{{ coupon.code }}" applied!</strong><br>
+        Discount: ₹{{ coupon.discount }}<br>
+        Final Price: ₹{{ final_price }}
+    </div>
+{% endif %}
+
+<!-- PLACE ORDER -->
 <a href="/place-order/" class="btn btn-success">Place Order</a>
+
 {% endblock %}

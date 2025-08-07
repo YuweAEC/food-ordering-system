@@ -4,7 +4,10 @@ from .forms import RegisterForm
 from .models import FoodItem, CartItem, Order, OrderItem, Category, Wishlist
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+from .models import Coupon
+from django.utils import timezone
 
 # Home with search and category filter
 def home(request):
@@ -104,3 +107,22 @@ def remove_from_wishlist(request, item_id):
     item = get_object_or_404(FoodItem, id=item_id)
     Wishlist.objects.filter(user=request.user, item=item).delete()
     return redirect('home')
+
+
+# Apply Coupon
+@require_POST
+def apply_coupon(request):
+    code = request.POST.get('code')
+    if not code:
+        return JsonResponse({'success': False, 'error': 'No coupon code provided.'})
+
+    try:
+        coupon = Coupon.objects.get(
+            code=code,
+            valid_from__lte=timezone.now(),
+            valid_to__gte=timezone.now(),
+            active=True
+        )
+        return JsonResponse({'success': True, 'discount': float(coupon.discount)})
+    except Coupon.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Invalid or expired coupon code.'})
