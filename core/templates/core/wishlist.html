@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Your Wishlist</h2>
+{% for wish in wishlist_items %}
+    <div>
+        <h4>{{ wish.item.name }}</h4>
+        <p>{{ wish.item.description }}</p>
+        <a href="{% url 'remove_from_wishlist' wish.item.id %}">Remove</a>
+    </div>
+{% empty %}
+    <p>Your wishlist is empty.</p>
+{% endfor %}
+{% endblock %}

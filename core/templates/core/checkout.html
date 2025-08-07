@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<h2>Checkout</h2>
+
+{% if order %}
+<table class="table">
+    {% for item in order.items.all %}
+    <tr>
+        <td>{{ item.food_item.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>₹{{ item.get_total_price }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td><strong>Total:</strong></td>
+        <td colspan="2"><strong>₹{{ order.get_total_price }}</strong></td>
+    </tr>
+    {% if order.coupon %}
+    <tr>
+        <td>Coupon Applied: {{ order.coupon.code }}</td>
+        <td>Discount: {{ order.coupon.discount }}%</td>
+        <td><strong>₹{{ order.final_price }}</strong></td>
+    </tr>
+    {% endif %}
+</table>
+
+<form method="post" action="{% url 'apply_coupon' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Apply Coupon</button>
+</form>
+
+<a href="#" class="btn btn-primary mt-3">Proceed to Payment</a>
+{% endif %}
+{% endblock %}

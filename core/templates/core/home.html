@@ -1,20 +1,42 @@
 {% extends 'core/base.html' %}
 {% block title %}Menu{% endblock %}
+
 {% block content %}
 <h2>Menu</h2>
+
+<!--  Search + Filter Form -->
+<form method="get" class="mb-4 d-flex align-items-center gap-2">
+    <input type="text" name="q" class="form-control" placeholder="Search..." value="{{ request.GET.q }}">
+    <select name="category" class="form-select" style="width: 200px;">
+        <option value="">All Categories</option>
+        <option value="Pizza" {% if request.GET.category == 'Pizza' %}selected{% endif %}>Pizza</option>
+        <option value="Drinks" {% if request.GET.category == 'Drinks' %}selected{% endif %}>Drinks</option>
+        <option value="Dessert" {% if request.GET.category == 'Dessert' %}selected{% endif %}>Dessert</option>
+    </select>
+    <button type="submit" class="btn btn-success">Search</button>
+</form>
+
+<!--  Menu Items Display -->
 <div class="row">
-    {% for item in items %}
+    {% for item in menu_items %}
     <div class="col-md-4">
         <div class="card mb-4">
-        <img src="{{ item.image.url }}" class="card-img-top">
-        <div class="card-body">
-            <h5 class="card-title">{{ item.name }}</h5>
-            <p>{{ item.description }}</p>
-            <p><strong>₹{{ item.price }}</strong></p>
-            <a href="/add-to-cart/{{ item.id }}/" class="btn btn-primary">Add to Cart</a>
-        </div>
+            <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ item.name }}</h5>
+                <p class="card-text">{{ item.description }}</p>
+                <p><strong>₹{{ item.price }}</strong></p>
+
+                <!--  Add to Cart -->
+                <a href="/add-to-cart/{{ item.id }}/" class="btn btn-primary">Add to Cart</a>
+
+                <!--  Add to Wishlist -->
+                <a href="{% url 'add_to_wishlist' item.id %}" class="btn btn-outline-danger ms-2">❤️</a>
+            </div>
         </div>
     </div>
+    {% empty %}
+    <p>No items found matching your search or filter.</p>
     {% endfor %}
 </div>
 {% endblock %}
