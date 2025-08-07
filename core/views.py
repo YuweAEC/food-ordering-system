@@ -8,6 +8,7 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from .models import Coupon
 from django.utils import timezone
+from django.contrib.auth.views import LoginView
 
 # Home with search and category filter
 def home(request):
@@ -48,6 +49,8 @@ def register(request):
         form = RegisterForm()
     return render(request, 'core/register.html', {'form': form})
 
+class CustomLoginView(LoginView):
+    template_name = 'core/login.html'
 
 # View Cart
 @login_required

@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from rest_framework import routers
 from .api_views import FoodItemViewSet, CartItemViewSet, WishlistViewSet
+from .views import CustomLoginView
 
 # DRF Router for API endpoints
 router = routers.DefaultRouter()
@@ -23,6 +24,7 @@ urlpatterns = [
 
     # Newly added
     path('apply-coupon/', views.apply_coupon, name='apply_coupon'),
+    path('login/', CustomLoginView.as_view(), name='login'),
 ]
 
 # Add API URLs from router
