@@ -27,3 +27,4 @@ A web-based food ordering system built with Django. This project allows users to
 - Wishlist and cart updates use AJAX for better user experience.
 - Coupon codes reduce the final price during checkout.
 - APIs can be tested via tools like Postman or directly from browser routes (e.g., `/api/food-items/`).
+
