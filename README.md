@@ -1,4 +1,4 @@
-# Food Ordering System
+# Food Ordering System:
 
 A web-based food ordering system built with Django. This project allows users to browse food items, add them to cart, place orders, manage wishlists, apply coupons, and track order history.
 
