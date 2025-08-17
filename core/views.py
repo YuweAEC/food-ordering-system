@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 from .forms import RegisterForm
-from .models import FoodItem, CartItem, Order, OrderItem, Category, Wishlist
+from .models import FoodItem, Cart, CartItem, Order, OrderItem, Category, Wishlist, Coupon
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
-from .models import Coupon
 from django.utils import timezone
 from django.contrib.auth.views import LoginView
+
 
 # Home with search and category filter
 def home(request):
@@ -26,7 +26,7 @@ def home(request):
     categories = Category.objects.all()
     wishlist = []
     if request.user.is_authenticated:
-        wishlist = Wishlist.objects.filter(user=request.user).values_list('item_id', flat=True)
+        wishlist = Wishlist.objects.filter(user=request.user).values_list('food_item_id', flat=True)
 
     context = {
         'items': items,
@@ -43,43 +43,55 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+            # Create empty cart for new user
+            Cart.objects.create(user=user)
             login(request, user)
             return redirect('/')
     else:
         form = RegisterForm()
     return render(request, 'core/register.html', {'form': form})
 
+
 class CustomLoginView(LoginView):
     template_name = 'core/login.html'
+
 
 # View Cart
 @login_required
 def cart(request):
-    cart_items = CartItem.objects.filter(user=request.user)
-    total = sum(item.total_price() for item in cart_items)
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_items = cart.items.all()
+    total = cart.get_total_price()
     return render(request, 'core/cart.html', {'cart_items': cart_items, 'total': total})
 
 
 # Add to Cart
 @login_required
-def add_to_cart(request, item_id):
-    item = get_object_or_404(FoodItem, id=item_id)
-    cart_item, created = CartItem.objects.get_or_create(user=request.user, food_item=item)
+def add_to_cart(request, food_item_id):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    food_item = get_object_or_404(FoodItem, id=food_item_id)
+    cart_item, created = CartItem.objects.get_or_create(food_item=food_item)
+
     if not created:
         cart_item.quantity += 1
-    cart_item.save()
+        cart_item.save()
+
+    cart.items.add(cart_item)
     return redirect('home')
 
 
 # Place Order
 @login_required
 def place_order(request):
-    cart_items = CartItem.objects.filter(user=request.user)
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_items = cart.items.all()
+
     if cart_items:
         order = Order.objects.create(user=request.user)
         for item in cart_items:
             OrderItem.objects.create(order=order, food_item=item.food_item, quantity=item.quantity)
-        cart_items.delete()
+        cart.items.clear()  # Empty cart after order
+
     return redirect('order_history')
 
 
@@ -96,19 +108,19 @@ def profile(request):
     return render(request, 'core/profile.html')
 
 
-#  Add to Wishlist
+# Add to Wishlist
 @login_required
-def add_to_wishlist(request, item_id):
-    item = get_object_or_404(FoodItem, id=item_id)
-    Wishlist.objects.get_or_create(user=request.user, item=item)
+def add_to_wishlist(request, food_item_id):
+    food_item = get_object_or_404(FoodItem, id=food_item_id)
+    Wishlist.objects.get_or_create(user=request.user, food_item=food_item)
     return redirect('home')
 
 
-#  Remove from Wishlist
+# Remove from Wishlist
 @login_required
-def remove_from_wishlist(request, item_id):
-    item = get_object_or_404(FoodItem, id=item_id)
-    Wishlist.objects.filter(user=request.user, item=item).delete()
+def remove_from_wishlist(request, food_item_id):
+    food_item = get_object_or_404(FoodItem, id=food_item_id)
+    Wishlist.objects.filter(user=request.user, food_item=food_item).delete()
     return redirect('home')
 
 

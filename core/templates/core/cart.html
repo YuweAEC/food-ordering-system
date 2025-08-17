@@ -4,19 +4,19 @@
 {% block content %}
 <h2>Your Cart</h2>
 
-<!-- CART ITEMS -->
 <ul class="list-group mb-3">
     {% for item in cart_items %}
     <li class="list-group-item d-flex justify-content-between">
         {{ item.food_item.name }} x {{ item.quantity }}
         <span>₹{{ item.total_price }}</span>
     </li>
+    {% empty %}
+    <li class="list-group-item">Your cart is empty.</li>
     {% endfor %}
 </ul>
 
-<!-- CART TOTAL -->
 <h4>Total: ₹{{ total }}</h4>
-<!-- 🔻 ADD THIS BLOCK: Coupon Form -->
+
 <form method="post" action="{% url 'apply_coupon' %}" class="mb-3">
     {% csrf_token %}
     <div class="input-group">
@@ -27,7 +27,6 @@
     </div>
 </form>
 
-<!--  ADD THIS BLOCK: If coupon is applied, show discount and final price -->
 {% if coupon %}
     <div class="alert alert-info">
         <strong>Coupon "{{ coupon.code }}" applied!</strong><br>
@@ -36,7 +35,6 @@
     </div>
 {% endif %}
 
-<!-- PLACE ORDER -->
-<a href="/place-order/" class="btn btn-success">Place Order</a>
-
+<a href="{% url 'place_order' %}" class="btn btn-success">Place Order</a>
 {% endblock %}
+
