@@ -51,3 +51,4 @@ This document helps verify that the system works correctly (Phase 1).
 - [ ] Navbar links (Home, Cart, Profile, Orders) work correctly
 - [ ] Unauthorized users get redirected to `/login/` when trying to access protected pages
 - [ ] Authenticated users can access cart and profile
+
