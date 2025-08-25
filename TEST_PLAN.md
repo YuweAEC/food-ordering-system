@@ -5,7 +5,7 @@ This document helps verify that the system works correctly (Phase 1).
 ---
 
 ## 1. Server Setup
-- [ ] Run `python manage.py runserver`
+- [ 1] Run `python manage.py runserver`
 - [ ] Visit `http://127.0.0.1:8000/`
 - [ ] Homepage loads without errors
 
